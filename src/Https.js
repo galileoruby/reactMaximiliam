@@ -7,23 +7,43 @@ export async function FetchMeals() {
             throw new Error('Failed to get meal');
         }
 
-        console.log('getting data from FetchMeals')
         return responseData;
     } catch (error) {
         throw new Error(error);
     }
 }
 
-export async function FetchImage(nameImage){
-    const reponseRaw = await fetch('http://localhost:3000/getimage?name='+ nameImage)
+export async function FetchImage(nameImage) {
+    const reponseRaw = await fetch('http://localhost:3000/getimage?name=' + nameImage)
 
     try {
-        const responseData =   reponseRaw.json();
+        const responseData = reponseRaw.json();
         if (!reponseRaw.ok) {
             throw new Error('Failed to get image');
         }
 
-        console.log('getting data from FetchMeals ', responseData)
+        return responseData;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+export async function Orders(order) {
+    const reponseRaw = await fetch('http://localhost:3000/orders',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(order)
+        });
+
+    try {
+        const responseData = reponseRaw.json();
+        if (!reponseRaw.ok) {
+            throw new Error('Failed to get image');
+        }
+
         return responseData;
     } catch (error) {
         throw new Error(error);

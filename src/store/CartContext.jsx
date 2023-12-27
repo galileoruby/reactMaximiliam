@@ -1,10 +1,13 @@
 import { createContext, useReducer } from "react";
 
-//leo: agregar aqui las propiedades que navegaran en a aplicacion, inculir funciones
+/*leo: agregar aqui las propiedades que navegaran en a aplicacion, inculir funciones
+
+*/
 const CartContext = createContext({
     items: [],
     addItem: (item) => { },
-    removeItem: (id) => { }
+    removeItem: (id) => { },
+    clearItem: () => { }
 });
 
 function cartReducer(state, action) {
@@ -27,14 +30,12 @@ function cartReducer(state, action) {
                 ...state.items[existingCartItemIndex],
                 quantity: existingItem.quantity + 1
             };
-
             updatedItems[existingCartItemIndex] = updatedItem;
 
         } else {
             updatedItems.push({ ...action.item, quantity: 1 });
 
         }
-
         return {
             ...state,
             items: updatedItems
@@ -45,7 +46,7 @@ function cartReducer(state, action) {
 
         //buscar indice especifico para encontrar item respectivo.
         const existingCartItemIndex = state.items.findIndex(
-            (item) => item.id === action.item.id
+            (item) => item.id === action.id
         );
 
         const existingCartItem = state.items[existingCartItemIndex];
@@ -58,32 +59,47 @@ function cartReducer(state, action) {
                 ...existingCartItem,
                 quantity: existingCartItem.quantity - 1
             };
-
             updatedItems[existingCartItemIndex] = updatedItem;
         }
-
         return {
             ...state,
             items: updatedItems
         };
-
-
     }
 
+    if (action.type === 'CLEAR_ITEM') {
+        return {
+            ...state,
+            items: []
+        };
+    }
     return state;
 }
 
 export function CartContextProvider({ children }) {
     const [cart, dispatchCarAction] = useReducer(cartReducer, { items: [] });
 
+    function addItem(item) {
+        dispatchCarAction({ type: 'ADD_ITEM', item })
+    }
+
+    function removeItem(id) {
+        //enlazar  el dispatchCarAction 
+        dispatchCarAction({ type: 'REMOVE_ITEM', id })
+    }
+
+    function clearItem() {
+        dispatchCarAction({ type: 'CLEAR_ITEM' })
+    }
+
+    //aqui se enlazan lals funciones implementadas en el reducer con el equivalente
+    //en el context
     const cartContext = {
-        items: cart.items
+        items: cart.items,
+        addItem,
+        removeItem,
+        clearItem
     };
-
-
-    function addItem() { }
-
-    function removeItem() { }
 
     //value almacena info a ser enviada a  CartContext.Provider
     //pueen ser fn, arreglo, objetos ...

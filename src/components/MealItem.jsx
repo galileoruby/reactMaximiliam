@@ -1,31 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { FetchImage } from '../Https'
 import Button from './Button.jsx';
-
 import { currencyFormatter } from '../util/formatting.js'
-
-
+import  CartContext  from '../store/CartContext.jsx';
 
 export default function MealItem({ meal }) {
-
+    //para usar context necesario pasar el context creado
+    //cartCtx ser la referencia a usar en componente.
+    const cartCtx =useContext(CartContext);
     const [blobImage, setBlobImage] = useState();
 
-
     async function _getImage(imageFromAPI) {
-
         const reponseImage = await FetchImage(imageFromAPI);
         console.log('imageFromAPI ', reponseImage);
-
-        //  return reponseImage;
         setBlobImage(reponseImage);
-
     }
 
-    const handleClicked = (e) => {
-        // console.log('clicked me: ', e);
+    const handleAddMealToCart = (e) => {
+
+        cartCtx.addItem(meal);
     }
-
-
 
     return <li className="meal-item">
         <article>
@@ -36,16 +30,12 @@ export default function MealItem({ meal }) {
                 <p className="meal-item-price">{currencyFormatter.format(meal.price)}</p>
                 <p className="meal-item-descripition" > {meal.description}  </p>
             </div>
-            <div className="meal-item-actions">
-                {/* <button>Add to Cart</button> */}
+            <div className="meal-item-actions">                
                 <Button
                     type="button"
-                    onClick={(e) => handleClicked(e)}
+                    onClick={(e) => handleAddMealToCart(e)}
                     className="meal-item" >Add to Cart.</Button>
             </div>
         </article>
     </li>
 }
-
-
-//http://localhost:5173/src/assets/logo.jpg
